@@ -1,0 +1,66 @@
+package com.test;
+import java.io.*;
+import java.net.*;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Day2 {
+	static String sendGet(String url){
+		String result = "";
+		BufferedReader in = null;
+		try{
+			URL realUrl = new URL(url);
+			URLConnection connection = realUrl.openConnection();
+			connection.connect();
+			in = new BufferedReader(new InputStreamReader(connection.getInputStream(),"UTF-8"));
+			String line;
+			while((line = in.readLine()) != null){
+				result += line;
+			}
+		}catch(Exception e){
+			System.out.println("发送GET请求出现异常！" + e);
+			e.printStackTrace();
+		}finally{
+			try{
+				if(in != null){
+					in.close();
+				}
+			}catch(Exception e2){
+				e2.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
+	static String RegexString(String targetStr,String patternStr){
+		
+		Pattern pattern = Pattern.compile(patternStr);
+		Matcher match = pattern.matcher(targetStr);
+		
+		if(match.find()){
+			return match.group(1);
+		}
+		return "noting";
+	}
+static ArrayList<String> RegexString2(String targetStr,String patternStr){
+		ArrayList<String> results = new ArrayList<String>();
+		Pattern pattern = Pattern.compile(patternStr);
+		Matcher match = pattern.matcher(targetStr);
+		boolean isFind = match.find();
+		while(isFind){
+			results.add(match.group(1));
+			isFind = match.find();
+		}
+		return results;
+	}
+	
+	public static void main(String[] args){
+		String url = "https://www.zhihu.com/explore/recommendations";
+		String result =sendGet(url);
+		//String imgSrc = RegexString(result,"question_link.+?>(.+?)<");
+		ArrayList<String> imgSrc = RegexString2(result,"question_link.+?>(.+?)<");
+		System.out.println(result);
+		System.out.println(imgSrc);
+	}
+}	
